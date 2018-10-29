@@ -1,0 +1,37 @@
+{
+  "name": "harbour-web-sdk",
+  "version": "0.0.1",
+  "description": "Easy web game SDK",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:harbourgames/harbour-web-sdk.git"
+  },
+  "author": {
+    "name": "Jim Lake"
+  },
+  "license": "MIT",
+  "scripts": {
+    "build": "rollup -c",
+    "prepublishOnly": "npm run build",
+    "lint": "eslint src"
+  },
+  "main": "dist/harbour-web-sdk.min.js",
+  "module": "dist/harbour-web-sdk.min.js",
+  "browser": "dist/harbour-web-sdk.min.js",
+  "files": [
+    "dist"
+  ],
+  "dependencies": {},
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-plugin-external-helpers": "^6.22.0",
+    "babel-plugin-transform-object-assign": "^6.22.0",
+    "babel-preset-env": "^1.6.1",
+    "rollup": "^0.58.2",
+    "rollup-plugin-babel": "^3.0.4",
+    "rollup-plugin-commonjs": "^9.1.0",
+    "rollup-plugin-node-resolve": "^3.3.0",
+    "rollup-plugin-replace": "^2.0.0",
+    "rollup-plugin-uglify": "^3.0.0"
+  }
+}
