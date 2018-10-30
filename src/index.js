@@ -56,8 +56,11 @@ function initializeAsync(opts) {
     asyncSeries([
       _loadFacebookSDK,
       player.checkLoginStatus,
-      ],() => {
-        if (!player.isLoggedIn()) {
+      ],
+      err => {
+        if (err) {
+          UI.addBlockError();
+        } else if (!player.isLoggedIn()) {
           UI.addLoginButton();
         }
       }
@@ -160,7 +163,8 @@ function _loadFacebookSDK(done) {
      var js, fjs = d.getElementsByTagName(s)[0];
      if (d.getElementById(id)) {return;}
      js = d.createElement(s); js.id = id;
-     js.src = "https://connect.facebook.net/en_US/sdk.js";
+     js.onerror = done;
+     js.src = "https://connect.facebook.net/en_US/sdk/debug.js";
      fjs.parentNode.insertBefore(js, fjs);
    }(document, "script", "facebook-jssdk"));
   /* eslint-enable */
