@@ -164,7 +164,7 @@ function _loadFacebookSDK(done) {
      if (d.getElementById(id)) {return;}
      js = d.createElement(s); js.id = id;
      js.onerror = done;
-     js.src = "https://connect.facebook.net/en_US/sdk/debug.js";
+     js.src = "https://connect.facebook.net/en_US/sdk.js";
      fjs.parentNode.insertBefore(js, fjs);
    }(document, "script", "facebook-jssdk"));
   /* eslint-enable */
