@@ -1,10 +1,9 @@
 
-import { asyncSeries, } from "./tools/util.js";
-
+import { initializeAsync, setLoadingProgress, startGameAsync } from './startup.js';
+import { getLeaderboardAsync } from './leaderboard.js';
 import { payments } from "./payments";
 import { player } from "./player"
 import { context } from "./context";
-import UI from "./ui";
 
 const HarbourSDK = {
   player,
@@ -30,10 +29,9 @@ const HarbourSDK = {
   getRewardedVideoAsync,
   getLeaderboardAsync,
 };
+
 window.HarbourSDK = HarbourSDK;
 window.FBInstant = window.FBInstant || HarbourSDK;
-
-let g_facebookAppId;
 
 function getLocale() {
   let locale = "en-US";
@@ -45,49 +43,6 @@ function getLocale() {
     }
   }
   return locale;
-}
-function initializeAsync(opts) {
-  g_facebookAppId = opts.facebookAppId;
-
-  return new Promise(resolve => {
-    UI.addLoader(opts);
-    resolve();
-
-    asyncSeries([
-      _loadFacebookSDK,
-      player.checkLoginStatus,
-      ],
-      err => {
-        if (err) {
-          UI.addBlockError();
-        } else if (!player.isLoggedIn()) {
-          UI.addLoginButton();
-        }
-      }
-    );
-  });
-}
-function setLoadingProgress(progress) {
-  return new Promise(resolve => {
-    UI.setLoaderText(progress.toFixed() + "% Loaded");
-    resolve();
-  });
-}
-function startGameAsync() {
-  return new Promise(resolve => {
-
-    function _startGame() {
-      UI.removeLoader();
-      resolve();
-    }
-
-    if (player.isLoggedIn()) {
-      _startGame();
-    } else {
-      UI.setLoaderText("Login to Continue");
-      player.setLoginCallback(_startGame);
-    }
-  });
 }
 function quit() {
   window.close();
@@ -143,29 +98,4 @@ function getInterstitialAdAsync() {
 }
 function getRewardedVideoAsync() {
   return Promise.reject({ code: "CLIENT_UNSUPPORTED_OPERATION", });
-}
-function getLeaderboardAsync() {
-  return Promise.reject({ code: "CLIENT_UNSUPPORTED_OPERATION", });
-}
-
-function _loadFacebookSDK(done) {
-  /* eslint-disable */
-  window.fbAsyncInit = function() {
-    FB.init({
-      appId: g_facebookAppId,
-      autoLogAppEvents: false,
-      xfbml: false,
-      version: "v3.2",
-    });
-    done();
-  };
-  (function(d, s, id){
-     var js, fjs = d.getElementsByTagName(s)[0];
-     if (d.getElementById(id)) {return;}
-     js = d.createElement(s); js.id = id;
-     js.onerror = done;
-     js.src = "https://connect.facebook.net/en_US/sdk.js";
-     fjs.parentNode.insertBefore(js, fjs);
-   }(document, "script", "facebook-jssdk"));
-  /* eslint-enable */
 }

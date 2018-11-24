@@ -23,7 +23,7 @@ export default [
       }),
       resolve({ browser: true, }),
       commonjs(),
-      uglify(),
+      //uglify(),
     ],
   },
 ]

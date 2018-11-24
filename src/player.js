@@ -1,5 +1,6 @@
 
 import UI from "./ui";
+import { getAppID } from './startup.js';
 
 export const player = {
   isLoggedIn,
@@ -121,6 +122,7 @@ function getSignedPlayerInfoAsync() {
   return Promise.resolve({
     getSignature: () => g_signedRequest,
     getPlayerID: getID,
+    getAppID,
   });
 }
 function canSubscribeBotAsync() {
