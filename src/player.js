@@ -31,6 +31,7 @@ let g_email;
 let g_name;
 let g_photoUrl;
 let g_signedRequest;
+let g_accessToken;
 let g_loginSuccessCallback;
 
 function isLoggedIn() {
@@ -41,6 +42,7 @@ function checkLoginStatus(done) {
     if (response.status === "connected") {
       g_uid = response.authResponse.userID;
       g_signedRequest = response.authResponse.signedRequest;
+      g_accessToken = response.authResponse.accessToken;
       _postLogin(done);
     } else {
       g_isLoggedIn = false;
@@ -123,6 +125,7 @@ function getSignedPlayerInfoAsync() {
     getSignature: () => g_signedRequest,
     getPlayerID: getID,
     getAppID,
+    getAccessToken: () => g_accessToken,
   });
 }
 function canSubscribeBotAsync() {
