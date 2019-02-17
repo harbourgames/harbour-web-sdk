@@ -17,7 +17,7 @@ const styles = {
     bottom: 0,
     left: 0,
     right: 0,
-    background: 'black center center no-repeat',
+    background: 'transparent center center no-repeat',
     'background-size': 'cover',
 
     display: 'flex',
@@ -34,7 +34,7 @@ const styles = {
     bottom: 0,
     left: 0,
     right: 0,
-    background: 'rgba(0,0,0,0.5)',
+    background: 'rgba(0,0,0,0.3)',
 
     display: 'flex',
     'flex-direction': 'column',
@@ -77,6 +77,8 @@ const styles = {
     color: 'white',
     'font-size': '16px',
     'font-weight': 'bold',
+    'font-family': 'inherit',
+    'text-shadow': '0 0 5px black',
   },
   loginButton: {
     position: 'absolute',
@@ -102,11 +104,12 @@ const styles = {
     width: '24px',
     height: '24px',
   },
-  loginText: {
+  buttonText: {
     'margin-left': '24px',
     'margin-top': '2px',
     color: 'white',
     'font-size': '16px',
+    'font-family': 'inherit',
   },
   errorText: {
     'z-index': '1',
@@ -114,7 +117,9 @@ const styles = {
     padding: '20px',
     color: 'red',
     'font-size': '16px',
+    'font-family': 'inherit',
     'text-align': 'center',
+    'text-shadow': '0 0 5px black',
   },
 }
 
@@ -136,12 +141,12 @@ function addLoader(opts) {
 
   const html =
 `<div id='harbour-loader' style='${loader_style}'>
-  <div style='${resolveStyles(styles.cover)}'></div>
-    <div style='${resolveStyles(styles.middleLoader)}'>
-      <div style='${resolveStyles(styles.spinner)}'></div>
-      <div style='${icon_style}'></div>
-    </div>
-    <div id='harbour-loader-text' style='${resolveStyles(styles.loaderText)}'>0% Loaded</div>
+  <div class='harbour-cover' style='${resolveStyles(styles.cover)}'></div>
+  <div class='harbour-loader' style='${resolveStyles(styles.middleLoader)}'>
+    <div class='harbour-spinner' style='${resolveStyles(styles.spinner)}'></div>
+    <div class='harbour-spinner-icon' style='${icon_style}'></div>
+  </div>
+  <div id='harbour-loader-text' style='${resolveStyles(styles.loaderText)}'>0% Loaded</div>
 </div>`;
 
   const temp = document.createElement('div');
@@ -182,7 +187,7 @@ function addLoginButton() {
  11.9-11.9V11.9C216 5.3 210.7 0 204.1 0z'>
     </path>
   </svg>
-  <div style='${resolveStyles(styles.loginText)}'>Continue With Facebook</div>
+  <div style='${resolveStyles(styles.buttonText)}'>Continue With Facebook</div>
 </div>`;
 
    _appendHtmlToLoader(html);

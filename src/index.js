@@ -86,8 +86,7 @@ function shareAsync() {
 function switchGameAsync() {
   return Promise.reject({ code: "CLIENT_UNSUPPORTED_OPERATION", });
 }
-function logEvent(eventName,value,parameters) {
-  console.log("logEvent:",eventName,value,parameters);
+function logEvent() {
   return null;
 }
 function onPause(callback) {

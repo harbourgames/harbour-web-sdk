@@ -57,6 +57,8 @@ function login() {
   window.FB.login(response => {
     if (response && response.status === "connected") {
       g_uid = response.authResponse.userID;
+      g_signedRequest = response.authResponse.signedRequest;
+      g_accessToken = response.authResponse.accessToken;
       _postLogin();
     }
   },opts);

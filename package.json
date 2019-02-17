@@ -1,6 +1,6 @@
 {
   "name": "harbour-web-sdk",
-  "version": "0.0.6",
+  "version": "0.0.9",
   "description": "Easy web game SDK",
   "repository": {
     "type": "git",
