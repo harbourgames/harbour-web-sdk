@@ -16,7 +16,6 @@ export function asyncSeries(list,callback) {
   }
   _run(0,list,callback);
 }
-
 export function resolveStyles(...args) {
   const obj = {};
 
@@ -38,4 +37,12 @@ export function resolveStyles(...args) {
     s += key + ":" + val + ";";
   }
   return s;
+}
+export function queryString(query) {
+  const query_list = [];
+  for (const key in query) {
+    const val = query[key];
+    query_list.push(`${encodeURIComponent(key)}=${encodeURIComponent(val)}`);
+  }
+  return query_list.join("&");
 }
