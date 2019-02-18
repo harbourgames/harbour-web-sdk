@@ -46,3 +46,10 @@ export function queryString(query) {
   }
   return query_list.join("&");
 }
+export function loadScript(url,done) {
+  const new_script = document.createElement("script");
+  new_script.onerror = done;
+  new_script.onload = event => done(null,event);
+  document.head.appendChild(new_script);
+  new_script.src = url;
+}

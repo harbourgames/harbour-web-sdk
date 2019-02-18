@@ -1,19 +1,19 @@
 
-import { asyncSeries, } from "./tools/util.js";
-import UI from "./ui";
-import { player } from "./player"
+import { asyncSeries, } from './tools/util.js';
+import UI from './ui';
+import { player } from './player';
+import { payments } from './payments';
 
 let g_facebookAppId;
 
-export function getAppID() {
-  return g_facebookAppId;
-}
+export function initializeAsync(params) {
+  g_facebookAppId = params.facebookAppId;
 
-export function initializeAsync(opts) {
-  g_facebookAppId = opts.facebookAppId;
+  player.setConfig(params);
+  payments.setConfig(params);
 
   return new Promise(resolve => {
-    UI.addLoader(opts);
+    UI.addLoader(params);
     resolve();
 
     asyncSeries([
@@ -32,7 +32,7 @@ export function initializeAsync(opts) {
 }
 export function setLoadingProgress(progress) {
   return new Promise(resolve => {
-    UI.setLoaderText(progress.toFixed() + "% Loaded");
+    UI.setLoaderText(`${progress.toFixed()}% Loaded`);
     resolve();
   });
 }

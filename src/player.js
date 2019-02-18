@@ -1,9 +1,9 @@
 
 import UI from "./ui";
-import { getAppID } from './startup.js';
 import { queryString } from './tools/util.js';
 
 export const player = {
+  setConfig,
   isLoggedIn,
   checkLoginStatus,
   login,
@@ -28,6 +28,7 @@ export const player = {
 
 const IPHONE_REGEX = /i(Phone|Pad|Pod)/;
 
+let g_facebookAppId;
 let g_isLoggedIn = false;
 let g_uid;
 let g_email;
@@ -36,6 +37,10 @@ let g_photoUrl;
 let g_signedRequest;
 let g_accessToken;
 let g_loginSuccessCallback;
+
+function setConfig(params) {
+  g_facebookAppId = params.facebookAppId;
+}
 
 function isLoggedIn() {
   return g_isLoggedIn;
@@ -77,7 +82,7 @@ function login() {
 function _oathLogin() {
   addEventListener('message',_loginListener);
   const query = {
-    client_id: getAppID(),
+    client_id: g_facebookAppId,
     display: 'popup',
     scope: 'email',
     response_type: 'token,granted_scopes',
@@ -183,7 +188,7 @@ function getSignedPlayerInfoAsync() {
   return Promise.resolve({
     getSignature: () => g_signedRequest,
     getPlayerID: getID,
-    getAppID,
+    getAppID: () => g_facebookAppId,
     getAccessToken: () => g_accessToken,
   });
 }
