@@ -4,10 +4,12 @@ import UI from './ui';
 import { player } from './player';
 import { payments } from './payments';
 
+let g_requiresLogin;
 let g_facebookAppId;
 
 export function initializeAsync(params) {
   g_facebookAppId = params.facebookAppId;
+  g_requiresLogin = params.requiresLogin || false;
 
   player.setConfig(params);
   payments.setConfig(params);
@@ -23,7 +25,7 @@ export function initializeAsync(params) {
       err => {
         if (err) {
           UI.addBlockError();
-        } else if (!player.isLoggedIn()) {
+        } else if (!player.isLoggedIn() && g_requiresLogin) {
           UI.addLoginButton();
         }
       }
@@ -44,7 +46,7 @@ export function startGameAsync() {
       resolve();
     }
 
-    if (player.isLoggedIn()) {
+    if (player.isLoggedIn() || !g_requiresLogin) {
       _startGame();
     } else {
       UI.setLoaderText("Login to Continue");

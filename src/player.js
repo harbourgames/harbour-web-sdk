@@ -26,9 +26,8 @@ export const player = {
   subscribeBotAsync,
 };
 
-const IPHONE_REGEX = /i(Phone|Pad|Pod)/;
-
 let g_facebookAppId;
+let g_oauthRedirectUrl;
 let g_isLoggedIn = false;
 let g_uid;
 let g_email;
@@ -40,6 +39,7 @@ let g_loginSuccessCallback;
 
 function setConfig(params) {
   g_facebookAppId = params.facebookAppId;
+  g_oauthRedirectUrl = params.oauthRedirectUrl;
 }
 
 function isLoggedIn() {
@@ -62,9 +62,12 @@ function checkLoginStatus(done) {
   });
 }
 
-function login() {
-  if (window.navigator && window.navigator.standalone && !IPHONE_REGEX.test(navigator.platform)) {
-    _oathLogin();
+function login(opts,done) {
+  const is_chrome_app = window.matchMedia &&
+    window.matchMedia('(display-mode: fullscreen),(display-mode: standalone)').matches;
+
+  if (is_chrome_app) {
+    _oathLogin(opts,done);
   } else {
     const scope = "email";
     const opts = { scope: scope };
@@ -73,33 +76,46 @@ function login() {
         g_uid = response.authResponse.userID;
         g_signedRequest = response.authResponse.signedRequest;
         g_accessToken = response.authResponse.accessToken;
-        _postLogin();
+        _postLogin(null,() => {
+          done();
+        });
+      } else {
+        done && done('sdk_login_fail');
       }
     },opts);
   }
 }
-
-function _oathLogin() {
+function _oathLogin(opts,done) {
   addEventListener('message',_loginListener);
+
   const query = {
     client_id: g_facebookAppId,
-    display: 'popup',
     scope: 'email',
-    response_type: 'token,granted_scopes',
-    auth_type: 'rerequest',
-    redirect_uri: `${window.location.origin}/fb_login_complete.html`,
+    response_type: 'signed_request,token',
+    redirect_uri: g_oauthRedirectUrl,
   };
+  if (opts && opts.state) {
+    query.state = opts.state;
+  }
   const url = 'https://www.facebook.com/v3.1/dialog/oauth?' + queryString(query);
-  const popup = window.open(url,'Facebook Login','width=500,height=500');
-  const intervalChecker = setInterval(() => {
-    if (popup.closed) {
-      clearInterval(intervalChecker);
+  const popup = window.open(url,'Facebook Login');
+  const interval_checker = setInterval(() => {
+    if (popup.closed || g_isLoggedIn || g_accessToken) {
+      clearInterval(interval_checker);
       removeEventListener('message',_loginListener);
-      if (!g_accessToken) {
-        checkLoginStatus();
+      if (g_accessToken) {
+        done && done();
+      } else {
+        checkLoginStatus(() => {
+          let err;
+          if (!g_isLoggedIn) {
+            err = 'oath_not_logged_in';
+          }
+          done && done(err);
+        });
       }
     }
-  },100);
+  },200);
 }
 
 function _loginListener(event) {
@@ -114,8 +130,11 @@ function _loginListener(event) {
     });
     if (hash_map.access_token && !g_accessToken) {
       g_accessToken = hash_map.access_token;
-      _postLogin(g_accessToken);
     }
+    if (hash_map.signed_reqest && !g_signedRequest) {
+      g_signedRequest = hash_map.signed_reqest;
+    }
+    _postLogin(g_accessToken);
   }
 }
 
@@ -128,8 +147,10 @@ function _postLogin(access_token,done) {
     opts.access_token = access_token;
   }
   window.FB.api("/me",opts,response => {
+    let err;
     if (!response || response.error) {
       console.error("FB login failed:",response);
+      err = 'sdk_not_logged_in';
     } else {
       g_uid = response.id;
       g_email = response.email;
@@ -140,7 +161,7 @@ function _postLogin(access_token,done) {
       g_loginSuccessCallback = null;
       UI.removeLoginButton();
     }
-    done && done();
+    done && done(err);
   });
 }
 
